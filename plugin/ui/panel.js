@@ -1,6 +1,7 @@
 import { noticeUrl, licenseUrl, revision } from '../source.js'
 import { copy } from './copy.js'
 import { dailyPages, label, dateLabel } from './daily.js'
+import { quizPanel, quizCredit } from './quiz.js'
 
 const api = window.agentPetsPlugin
 const find = (id) => document.getElementById(id)
@@ -15,6 +16,7 @@ let status = ''
 let page = 'home'
 let localized = false
 const pages = dailyPages({ content, node, button, heading, send, refresh: () => render() })
+const renderQuiz = quizPanel({ content, node, button, heading, send, refresh: () => render() })
 const l = (key) => label(key, locale)
 
 function node(tag, text, className) {
@@ -114,14 +116,14 @@ function render(focus = false) {
   const t = copy[locale]
   document.documentElement.lang = locale === 'zh' ? 'zh-Hant' : 'en'
   find('brand').textContent = t.brand
-  find('deck').textContent = t.deck
+  find('deck').textContent = page === 'quiz' || showingSources ? l('quizDeck') : t.deck
   find('sources').textContent = showingSources ? t.back : t.sources
   find('language').textContent = locale === 'zh' ? 'English' : '繁體中文'
   find('status').textContent = t[status] || l(status) || (state?.damaged ? l('damaged') : '')
   const nav = find('pages')
   nav.replaceChildren()
   if (state)
-    for (const key of ['home', 'library', 'settings']) {
+    for (const key of ['home', 'quiz', 'library', 'settings']) {
       const tab = button(l(key), () => {
         page = key
         showingSources = false
@@ -139,12 +141,15 @@ function render(focus = false) {
       node('p', `${t.version} · ${revision}`, 'meta'),
       link(t.notice, noticeUrl),
       link(t.license, licenseUrl),
+      node('p', quizCredit(locale)),
     )
   } else if (!state || status === 'disconnected') {
     content.append(
       heading(t.brand),
       button(t.retry, () => send('sync')),
     )
+  } else if (page === 'quiz') {
+    renderQuiz(state.quiz, locale, Boolean(pending))
   } else if (page !== 'home') {
     pages.render(page, state, locale, t)
   } else if (state.page === 'setup') {

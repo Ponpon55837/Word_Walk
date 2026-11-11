@@ -148,3 +148,18 @@ h3 {
     flex: 1 1 100%;
   }
 }
+.quiz-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 8px;
+}
+.quiz-prompt {
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+}
+.quiz-score {
+  font-size: 2rem;
+}
+form {
+  display: grid;
+  gap: 12px;
+}

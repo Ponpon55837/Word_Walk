@@ -39,6 +39,8 @@ export function normalizeDeck(rows) {
       id: row.id,
       word: shortText(row.word, 64),
       reading: shortText(row.reading, 64),
+      otherReadings: row.other_readings === undefined ? [] : textList(row.other_readings, 32, 64),
+      otherForms: row.other_forms === undefined ? [] : textList(row.other_forms, 32, 64),
       meanings: textList(row.meanings, 12, 512),
       pos: textList(row.pos, 12, 32),
       example,

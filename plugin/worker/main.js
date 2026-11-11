@@ -1,4 +1,6 @@
 import { loadDeck } from './provider.js'
+import { supportsQuiz } from '../quiz-formats.js'
+import { makeQuiz, answerQuiz, nextQuestion, quizView } from './quiz.js'
 import { createRound, grade, roundSizes, ratings, view } from './study.js'
 import {
   backupKey,
@@ -20,6 +22,7 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
   let deck
   let byId
   let guest
+  let quiz
   let daily = false
   let profile = freshProfile()
   let damaged = false
@@ -159,13 +162,36 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
         ]),
       )
     }
-    return { ...state, ...extra }
+    return { ...state, ...extra, quiz: quizView(quiz) }
   }
 
   async function handle(message) {
     const { type } = message
     if (type === 'sync') return
     if (message.token !== token) throw new Error('stale')
+    if (type === 'quizStart') {
+      if (
+        quiz ||
+        !supportsQuiz(message.language, message.format) ||
+        !roundSizes.includes(message.size)
+      )
+        throw new Error('stale')
+      if (message.language === 'ja') await load()
+      quiz = makeQuiz(message.language, message.format, message.size, deck)
+      return
+    }
+    if (type === 'quizAnswer') {
+      answerQuiz(quiz, message.answer)
+      return
+    }
+    if (type === 'quizNext') {
+      nextQuestion(quiz)
+      return
+    }
+    if (type === 'quizExit') {
+      quiz = null
+      return
+    }
     if (type === 'home') {
       daily = false
       guest = null
@@ -313,6 +339,7 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
         'storage_error',
         'invalid_backup',
         'damaged',
+        'quiz_unavailable',
       ]
       error = known.includes(cause?.message) ? cause.message : 'unavailable'
     } finally {

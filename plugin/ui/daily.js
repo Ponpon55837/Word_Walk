@@ -1,4 +1,10 @@
 const labels = {
+  quiz: ['小測驗', 'Quiz'],
+  quizDeck: ['日文 N5 · 生活英文', 'Japanese N5 · Everyday English'],
+  quiz_unavailable: [
+    '本題庫缺少足夠的不同選項，請改選其他題型。',
+    'This deck has too few distinct choices. Select another question type.',
+  ],
   daily: ['每日練習', 'Daily practice'],
   library: ['單字本', 'Vocabulary'],
   settings: ['設定與備份', 'Settings & backup'],

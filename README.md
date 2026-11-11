@@ -1,6 +1,17 @@
 # 單字散步 · Word Walk
 
-在 Agent Pets 以日文 N5 翻卡學習 674 個單字。先回想讀音與意思，再翻面看英文釋義、自評並安排複習。介面可切換繁體中文與英文。
+在 Agent Pets 以日文 N5 翻卡學習 674 個單字，也能用六種題型練習日文與生活英文。介面可切換繁體中文與英文。
+
+## 小測驗
+
+進入「小測驗」選擇學習語言、題型和題數。每輪可做 3、5 或 10 題，也可選「混合題型」交替練習。每題送出後立即顯示正解，結束時可查看得分及錯題。切換分頁可以接續，測驗紀錄保留至插件重啟。
+
+| 學習語言 | 題型 | 題庫 |
+| --- | --- | --- |
+| 日文 | 看日文選英文詞義、看漢字選讀音、看假名與詞義選日文寫法 | 沿用已驗證的 OpenJLPT N5。讀音與寫法題會篩選含漢字的詞條。 |
+| 英文 | 看英文選繁中詞義、句子選詞填空、依繁中提示重組字母並輸入單字 | 隨插件附上 48 個生活單字、繁中釋義與 Word Walk 原創例句，可離線使用。 |
+
+日文每日複習沿用原有自評與排程。小測驗的客觀得分獨立計算，兩種練習可以交錯使用。
 
 ## 安裝與使用
 
@@ -36,5 +47,7 @@ pwsh -NoProfile -File scripts/package.ps1
 簽章涵蓋封裝內每個內容檔案的相對路徑及雜湊。打包工具只收錄指定檔案，最後印出整包 SHA-256。安裝包位於 `build/word-walk.agentpet-plugin`。隔離 Electron 驗收使用 `tests/electron.mjs`，啟動方式見 [測試環境說明](docs/phase-reports/wp-1.md#重跑-electron-驗收)。
 
 ## English
+
+Open **Quiz** for Japanese N5 or Everyday English. Choose one format or mix all three for your chosen language. Japanese quizzes cover meanings, kana readings and written forms. English quizzes cover Traditional Chinese meanings, sentence completion and spelling from scrambled letters. Each round ends with a score and a review of missed answers. English content is bundled for offline use.
 
 Enable the online plugin catalog in Agent Pets 1.14.0 or later, install **Word Walk** and verify the publisher fingerprint above. Select **English** in the panel. Daily practice keeps your progress on this device and schedules reviews. **Practice without saving** keeps ratings in memory. Vocabulary supports search and due-word filtering. In **Settings & backup**, set your daily limits, opt into reminders, export progress or preview a restore. The first practice after a restart downloads the pinned Japanese N5 deck with English definitions.

@@ -82,17 +82,23 @@ async function hostCall(name, ...args) {
 }
 
 await hostCall('setPluginGlobalPreferences', { pluginsEnabled: true })
-await evaluate(main, `globalThis.__agentPetsE2E.dialogQueue.push(${JSON.stringify(archive)})`)
-const plan = await hostCall('selectPluginArchive')
-assert.equal(plan.pluginId, 'word-walk')
-assert.equal(plan.signatureStatus, 'valid')
-assert.match(plan.signatureFingerprint, /^[a-f0-9]{16}$/)
-await hostCall(
-  'installPluginPlan',
-  plan.token,
-  plan.requiresReconsent,
-  Boolean(plan.requiresSignatureConfirmation),
-)
+async function install(file, expectedKind) {
+  await evaluate(main, `globalThis.__agentPetsE2E.dialogQueue.push(${JSON.stringify(file)})`)
+  const plan = await hostCall('selectPluginArchive')
+  assert.equal(plan.pluginId, 'word-walk')
+  assert.equal(plan.signatureStatus, 'valid')
+  assert.equal(plan.signatureFingerprint, '42436e4d75b74141')
+  assert.equal(plan.kind, expectedKind)
+  assert.equal(plan.requiresReconsent, false)
+  await hostCall(
+    'installPluginPlan',
+    plan.token,
+    plan.requiresReconsent,
+    Boolean(plan.requiresSignatureConfirmation),
+  )
+}
+const previous = process.argv[5]
+await install(previous ? resolve(previous) : archive, 'new')
 await hostCall('setPluginInstancePreferences', 'word-walk', { enabled: true })
 await evaluate(panel, 'window.electronAPI.setPanelBlurLock({ pinned: true })')
 console.log('Installed and enabled the local package in the isolated profile.')
@@ -220,6 +226,7 @@ await waitFor(
 )
 page.connection.close()
 await hostCall('setPluginInstancePreferences', 'word-walk', { enabled: false })
+if (previous) await install(archive, 'update')
 await hostCall('setPluginInstancePreferences', 'word-walk', { enabled: true })
 assert.ok(await open())
 page = await waitFor(getPage, 'restarted plugin panel')
@@ -234,6 +241,49 @@ await waitFor(
   'saved second card',
 )
 console.log('Verified Ed25519, daily plan, vocabulary, backup restore and worker restart.')
+await click('小測驗')
+async function choose(label, value) {
+  await evaluate(
+    page,
+    `(() => { const el=Array.from(document.querySelectorAll('label')).find(l=>l.firstChild.textContent===${JSON.stringify(label)}).querySelector('select');el.value=${JSON.stringify(value)};el.dispatchEvent(new Event('change')); })()`,
+  )
+}
+for (const language of ['ja', 'en']) {
+  await choose('學習語言', language)
+  await choose('題數', '3')
+  await click('開始測驗')
+  for (let i = 0; i < 3; i++) {
+    await waitFor(
+      () =>
+        evaluate(
+          page,
+          "Boolean(document.querySelector('.quiz-options button:enabled, #content form input:enabled'))",
+        ),
+      'answerable quiz',
+    )
+    await evaluate(
+      page,
+      `(() => { const option=document.querySelector('.quiz-options button'); if(option) option.click(); else {const input=document.querySelector('#content form input');input.value='practice';input.form.requestSubmit()} })()`,
+    )
+    await click(i === 2 ? '查看結果' : '下一題')
+  }
+  await waitFor(
+    () => evaluate(page, "Boolean(document.querySelector('.quiz-score'))"),
+    'quiz results',
+  )
+  await click('再做一組')
+  await waitFor(
+    () =>
+      evaluate(
+        page,
+        "Boolean(document.querySelector('#content select:enabled')) && !document.querySelector('.quiz-score')",
+      ),
+    'quiz setup',
+  )
+}
+await click('今天')
+assert.equal(await evaluate(page, "document.querySelector('.word').textContent"), resumeWord)
+console.log('Verified Japanese and English mixed quizzes and preserved daily progress.')
 page.connection.close()
 
 await hostCall('setPluginInstancePreferences', 'word-walk', { enabled: false })

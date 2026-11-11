@@ -10,7 +10,8 @@ $tempPath = Join-Path $build ([guid]::NewGuid().ToString() + '.tmp')
 
 # Keep the installable archive independent of editor files and local test output.
 $entries = @(
-  'plugin.json', 'source.js', 'legal/openjlpt.json',
+  'plugin.json', 'source.js', 'quiz-formats.js', 'legal/openjlpt.json',
+  'worker/quiz.js','worker/english.js','ui/quiz.js',
   'worker/main.js', 'worker/provider.js', 'worker/study.js', 'worker/profile.js',
   'ui/copy.js', 'ui/daily.js', 'ui/index.html', 'ui/panel.css', 'ui/panel.js'
 )
