@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>單字散步 · Word Walk</title>
+    <link rel="stylesheet" href="agent-pets://plugin/_shared/tokens.css" />
+    <link rel="stylesheet" href="./panel.css" />
+  </head>
+  <body>
+    <header>
+      <h1 id="brand">單字散步</h1>
+      <button class="quiet" id="language" type="button">English</button>
+    </header>
+    <nav id="pages" aria-label="Word Walk"></nav>
+    <main>
+      <p class="deck" id="deck"></p>
+      <section id="content" aria-labelledby="heading"></section>
+      <p id="status" role="status"></p>
+    </main>
+    <footer><button class="quiet" id="sources" type="button"></button></footer>
+    <script type="module" src="./panel.js"></script>
+  </body>
+</html>

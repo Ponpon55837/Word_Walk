@@ -1,0 +1,24 @@
+{
+  "id": "word-walk",
+  "name": { "zh-TW": "單字散步", "en-US": "Word Walk" },
+  "version": "1.0.0",
+  "apiVersion": "1",
+  "author": "Word Walk contributors",
+  "entry": "worker/main.js",
+  "permissions": {
+    "storage": true,
+    "schedule": { "minIntervalSec": 60 },
+    "network": { "hosts": ["raw.githubusercontent.com"] },
+    "links": { "hosts": ["github.com", "creativecommons.org", "tatoeba.org"] }
+  },
+  "contributes": {
+    "feed": true,
+    "reaction": true,
+    "badge": true,
+    "panelView": {
+      "entry": "ui/index.html",
+      "title": { "zh-TW": "單字散步", "en-US": "Word Walk" },
+      "preferredSize": { "width": 580, "height": 560 }
+    }
+  }
+}
