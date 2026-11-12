@@ -13,7 +13,6 @@ import {
   planDay,
   dailyRound,
   gradeDaily,
-  dueIds,
   nextReview,
 } from './profile.js'
 
@@ -85,10 +84,17 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
   }
 
   const today = () => localDay(clock())
-  const remaining = () => dueIds(profile, today()).length
+  function remaining() {
+    const day = today()
+    let count = 0
+    for (const word of Object.values(profile.words)) {
+      if (word[1] <= day) count++
+    }
+    return count
+  }
 
   async function badge() {
-    const count = remaining()
+    const count = profile.prefs.showBadge ? remaining() : 0
     const next = count ? String(count) : null
     if (lastBadge === next) return
     try {
@@ -104,6 +110,7 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
     if (busy || damaged) return
     busy = true
     try {
+      await badge()
       const now = clock()
       const day = localDay(now)
       const { reminder, time, lang } = profile.prefs
@@ -133,7 +140,6 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
           })
         await save({ ...profile, notified: day })
       }
-      await badge()
     } finally {
       busy = false
     }
@@ -235,6 +241,7 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
       damaged = false
       daily = false
       guest = null
+      await badge()
       return
     }
     if (damaged && type !== 'flip' && type !== 'hint' && type !== 'grade')
@@ -242,6 +249,7 @@ export function connect(api, provider = loadDeck, clock = () => new Date()) {
     if (type === 'prefs') {
       checkPrefs(message.prefs)
       await save({ ...profile, prefs: message.prefs })
+      await badge()
       return
     }
     if (type === 'library') {

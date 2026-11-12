@@ -160,6 +160,39 @@ test('backup preview, explicit replacement, undo, and corrupt profile recovery',
   assert.equal((await h.send('restore', { confirm: valid.detail.id })).state.damaged, false)
 })
 
+test('badge visibility persists, clears on save, and defaults to visible for legacy backups', async () => {
+  const h = host()
+  const legacy = freshProfile()
+  delete legacy.prefs.showBadge
+  const day = localDay(new Date(2026, 10, 11))
+  legacy.words[deck[0].id] = [0, day, day - 1, 'good', false]
+  h.values.set(profileKey, legacy)
+  const { state } = await h.send('sync')
+  assert.equal(state.prefs.showBadge, true)
+  await h.tick()
+  const visible = { text: '1', tone: 'info' }
+  assert.deepEqual(h.effects.badge, [visible])
+  const prefs = { ...state.prefs, showBadge: false }
+  assert.equal((await h.send('prefs', { prefs })).error, null)
+  assert.deepEqual(h.effects.badge, [visible, null])
+  h.restart()
+  const afterRestart = (await h.send('sync')).state
+  assert.equal(afterRestart.due, 1)
+  assert.equal(afterRestart.prefs.showBadge, false)
+  await h.tick()
+  assert.equal(h.effects.badge.at(-1), null)
+  assert.equal(
+    (await h.send('prefs', { prefs: { ...prefs, showBadge: 'false' } })).error,
+    'invalid_backup',
+  )
+  const preview = await h.send('restorePreview', { text: JSON.stringify(legacy) })
+  await h.send('restore', { confirm: preview.detail.id })
+  assert.deepEqual(h.effects.badge.at(-1), visible)
+  const reset = await h.send('resetPreview')
+  await h.send('restore', { confirm: reset.detail.id })
+  assert.equal(h.effects.badge.at(-1), null)
+})
+
 test('reminders are opt-in and deduplicated across worker restarts', async () => {
   const h = host()
   const { state } = await h.send('sync')

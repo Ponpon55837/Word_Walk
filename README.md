@@ -22,7 +22,7 @@
 
 每日練習把目前卡片、自評與下次複習日期保存在本機。新字在隔天複習，之後按自評依序延長至 3、7、14、30、60、120 天。同日重看只更新自評。重啟後可回到今天的進度，需連線再次取得題庫。宿主接受儲存後會延後寫入磁碟，突然斷電時可能遺失最近一次變更。
 
-「單字本」可按單字、假名或英文搜尋，也可只看待複習或需要再練的詞。在「設定與備份」可複製 JSON 備份、貼上預覽還原或清除進度。確認覆蓋前會顯示影響的單字數，另保留上一次替換前的資料。每日提醒預設關閉；開啟後，在所選時間起的一小時內、App 運行且仍有任務時提醒一次。到期數顯示於寵物徽章，每日完成可選擇播放鼓勵反應。
+「單字本」可按單字、假名或英文搜尋，也可只看待複習或需要再練的詞。在「設定與備份」可複製 JSON 備份、貼上預覽還原或清除進度。確認覆蓋前會顯示影響的單字數，另保留上一次替換前的資料。每日提醒預設關閉；開啟後，在所選時間起的一小時內、App 運行且仍有任務時提醒一次。寵物徽章預設顯示待複習單字數。若要隱藏，請在「設定與備份」取消勾選「在寵物徽章顯示待複習單字數」，再按「套用設定」。每日完成時也可選擇讓寵物鼓勵你。
 
 ## 資安與資料來源
 
@@ -50,4 +50,4 @@ pwsh -NoProfile -File scripts/package.ps1
 
 Open **Quiz** for Japanese N5 or Everyday English. Choose one format or mix all three for your chosen language. Japanese quizzes cover meanings, kana readings and written forms. English quizzes cover Traditional Chinese meanings, sentence completion and spelling from scrambled letters. Each round ends with a score and a review of missed answers. English content is bundled for offline use.
 
-Enable the online plugin catalog in Agent Pets 1.14.0 or later, install **Word Walk** and verify the publisher fingerprint above. Select **English** in the panel. Daily practice keeps your progress on this device and schedules reviews. **Practice without saving** keeps ratings in memory. Vocabulary supports search and due-word filtering. In **Settings & backup**, set your daily limits, opt into reminders, export progress or preview a restore. The first practice after a restart downloads the pinned Japanese N5 deck with English definitions.
+Enable the online plugin catalog in Agent Pets 1.14.0 or later, install **Word Walk** and verify the publisher fingerprint above. Select **English** in the panel. Daily practice keeps your progress on this device and schedules reviews. **Practice without saving** keeps ratings in memory. Vocabulary supports search and due-word filtering. In **Settings & backup**, set your daily limits, opt into reminders, export progress or preview a restore. To hide the count, clear **Show due word count on the pet badge** and select **Save settings**. The first practice after a restart downloads the pinned Japanese N5 deck with English definitions.

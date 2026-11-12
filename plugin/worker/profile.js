@@ -27,17 +27,26 @@ export function freshProfile() {
     words: {},
     plan: null,
     notified: null,
-    prefs: { goal: 5, budget: 10, reminder: false, time: '18:00', celebrate: true, lang: 'zh' },
+    prefs: {
+      goal: 5,
+      budget: 10,
+      reminder: false,
+      time: '18:00',
+      showBadge: true,
+      celebrate: true,
+      lang: 'zh',
+    },
   }
 }
 
 export function checkPrefs(p) {
   if (
-    !keys(p, ['goal', 'budget', 'reminder', 'time', 'celebrate', 'lang']) ||
+    !keys(p, ['goal', 'budget', 'reminder', 'time', 'showBadge', 'celebrate', 'lang']) ||
     ![0, 3, 5, 10].includes(p.goal) ||
     ![5, 10, 20].includes(p.budget) ||
     !['en', 'zh'].includes(p.lang) ||
     typeof p.reminder !== 'boolean' ||
+    typeof p.showBadge !== 'boolean' ||
     typeof p.celebrate !== 'boolean' ||
     typeof p.time !== 'string' ||
     !/^([01]\d|2[0-3]):[0-5]\d$/.test(p.time)
@@ -58,6 +67,9 @@ export function validateProfile(data) {
     !(data.notified === null || isDay(data.notified))
   )
     invalid()
+  // Earlier releases always displayed the badge and did not store this preference.
+  if (record(data.prefs) && !Object.hasOwn(data.prefs, 'showBadge'))
+    data = { ...data, prefs: { ...data.prefs, showBadge: true } }
   checkPrefs(data.prefs)
   for (const [id, row] of Object.entries(data.words)) {
     if (

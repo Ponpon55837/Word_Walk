@@ -284,6 +284,20 @@ for (const language of ['ja', 'en']) {
 await click('今天')
 assert.equal(await evaluate(page, "document.querySelector('.word').textContent"), resumeWord)
 console.log('Verified Japanese and English mixed quizzes and preserved daily progress.')
+await click('設定與備份')
+const badgeCheckbox =
+  "Array.from(document.querySelectorAll('label')).find(l => l.textContent === '在寵物徽章顯示待複習單字數').querySelector('input')"
+assert.equal(await evaluate(page, badgeCheckbox + '.checked'), true)
+await evaluate(page, badgeCheckbox + '.click()')
+await click('套用設定')
+await waitFor(
+  () => evaluate(page, "document.body.textContent.includes('已儲存設定')"),
+  'badge preference saved',
+)
+await click('今天')
+await click('設定與備份')
+assert.equal(await evaluate(page, badgeCheckbox + '.checked'), false)
+console.log('Verified the badge setting after upgrade and panel navigation.')
 page.connection.close()
 
 await hostCall('setPluginInstancePreferences', 'word-walk', { enabled: false })
